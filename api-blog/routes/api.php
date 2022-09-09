@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PostController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,3 +29,5 @@ Route::group([
         Route::get('user', [AuthController::class, 'user']);
     });
 });
+
+Route::resource('posts', PostController::class);
