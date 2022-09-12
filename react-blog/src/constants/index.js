@@ -1,0 +1,3 @@
+export const GET_ALL_POSTS = 'GET_ALL_POSTS'
+export const REGISTER_SUCCESS = 'REGISTER_SUCCESS'
+export const REGISTER_FAIL = 'REGISTER_FAIL'
