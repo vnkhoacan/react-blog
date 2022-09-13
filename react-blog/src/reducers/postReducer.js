@@ -7,7 +7,7 @@ const initialState = {
     isFetchingPosts: true
 }
 
-const PostReducer = (state = initialState, action) => {
+const postReducer = (state = initialState, action) => {
     switch(action.type) {
         case GET_ALL_POSTS:
             return {
@@ -20,4 +20,4 @@ const PostReducer = (state = initialState, action) => {
     }
 }
 
-export default PostReducer
+export default postReducer

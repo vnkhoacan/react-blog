@@ -27,8 +27,8 @@ const Home = ({ posts, isFetchingPosts, getAllPosts }) => {
 
 const mapStateToProps = state => {
     return {
-        posts: state.PostReducer.posts,
-        isFetchingPosts: state.PostReducer.isFetchingPosts
+        posts: state.post.posts,
+        isFetchingPosts: state.post.isFetchingPosts
     }
 }
 
