@@ -3,6 +3,8 @@ import { connect } from "react-redux"
 import { useEffect } from "react"
 import { getUser, logout } from "../actions/AuthActions"
 import { BASE_URL } from "../constants"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faHouse, faHouseUser} from "@fortawesome/free-solid-svg-icons";
 const Navbar = ({ user, getUser, logout }) => {
     const navigate = useNavigate()
     const handleLogout = () => {
@@ -24,11 +26,19 @@ const Navbar = ({ user, getUser, logout }) => {
             <div className="collapse navbar-collapse" id="navbarNav">
                 <ul className="navbar-nav">
                 <li className="nav-item">
-                    <Link className="nav-link" to={'/'}>Home</Link>
+                    <Link className="nav-link" to={'/'} title="Home">
+                        <FontAwesomeIcon icon={faHouse} size="xl"/>
+                    </Link>
                 </li>
-                <li className="nav-item">
-                    <Link className="nav-link" to={'/my-posts'}>My Posts</Link>
-                </li>
+                { user
+                && (
+                    <li className="nav-item">
+                        <Link className="nav-link" to={'/my-posts'} title="My Posts">
+                            <FontAwesomeIcon icon={faHouseUser} size="xl"/>
+                        </Link>
+                    </li>
+                )
+                }
                 </ul>
             </div>
             <div className='d-flex'>

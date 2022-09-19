@@ -24,7 +24,7 @@ const DetailPost = ({ user, getPost }) => {
             setPost(postData.post)
             setAuthor(postData.author)
             setComments(postData.comments)
-            postData.likes.includes(user.id) && setIsLiked(true)
+            user && postData.likes.includes(user.id) && setIsLiked(true)
             setLoading(false)
         })
     }

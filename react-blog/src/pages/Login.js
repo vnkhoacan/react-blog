@@ -1,11 +1,12 @@
 import { Link } from "react-router-dom";
 import LoginForm from "../components/form/LoginForm";
 import { login } from "../actions/AuthActions";
+import { clearMessage } from "../actions/MessageActions";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 
-const Login = ({message, login}) => {
+const Login = ({message, login, clearMessage}) => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false)
     const submit = (values) => {
@@ -19,6 +20,9 @@ const Login = ({message, login}) => {
     useEffect(() => {
         let user = localStorage.getItem("user")
         if(user) navigate('/')
+        return () => {
+            clearMessage()
+        }
         // eslint-disable-next-line
     }, [])
 
@@ -45,7 +49,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        login: (user) => dispatch(login(user))
+        login: (user) => dispatch(login(user)),
+        clearMessage: () => dispatch(clearMessage())
     }
 }
 

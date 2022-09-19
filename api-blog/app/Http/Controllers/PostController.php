@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\StorePostRequest;
 use App\Models\Post;
 use App\Models\Comment;
 use App\Models\Like;
 use App\Models\User;
 use App\Http\Traits\ApiResponses;
+use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
@@ -24,15 +26,29 @@ class PostController extends Controller
         return $this->successResponse($post);
     }
 
+    public function myPosts()
+    {
+        $posts = Post::where('user_id', Auth::guard('api')->user()->id)->get();
+
+        return $this->successResponse($posts);
+    }
+
     /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StorePostRequest $request)
     {
-
+        $post = new Post;
+        $post->title = $request->get('title');
+        $post->content = $request->get('content');
+        $post->user_id = Auth::guard('api')->user()->id;
+        $post->like_count = 0;
+        $post->comment_count = 0;
+        $post->save();
+        return $this->successResponse('');
     }
 
     /**
@@ -80,9 +96,13 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(StorePostRequest $request, $id)
     {
-        //
+        $post = Post::find($id);
+        $post->title = $request->get('title');
+        $post->content = $request->get('content');
+        $post->save();
+        return $this->successResponse('');
     }
 
     /**
@@ -93,6 +113,8 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $post = Post::find($id);
+        $post->delete();
+        return $this->successResponse('');
     }
 }

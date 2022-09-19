@@ -18,11 +18,11 @@ const renderField = ({ type, label, input, meta: { touched, error } }) => (
     <div className="mb-3">
         <label className="form-label">{label}</label>
         <br/>
-        <input {...input} className="form-control" type={type}/>
+        <input {...input} className={`form-control ${touched && error && ` is-invalid`}`} type={type}/>
         {touched && error &&
         (
-            <div className="alert alert-danger p-1 mb-0" role="alert">
-            {error}
+            <div className="invalid-feedback">
+                {error}
             </div>
         )}
     </div>

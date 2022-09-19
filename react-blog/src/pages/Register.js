@@ -1,10 +1,11 @@
 import RegisterForm from "../components/form/RegisterForm";
 import { connect } from "react-redux";
 import { register } from "../actions/AuthActions";
+import { clearMessage } from "../actions/MessageActions";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-const Register = ({message, register}) => {
+const Register = ({message, register, clearMessage}) => {
     const [successful, setSuccessful] = useState(false)
     const [loading, setLoading] = useState(false)
     const submit = (values) => {
@@ -16,6 +17,11 @@ const Register = ({message, register}) => {
         })
         setLoading(false)
     }
+    useEffect(() => {
+        return () => {
+            clearMessage()
+        }
+    })
 
     return (
         <div className="container">
@@ -38,7 +44,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        register: (user) => dispatch(register(user))
+        register: (user) => dispatch(register(user)),
+        clearMessage: () => dispatch(clearMessage())
     }
 }
 

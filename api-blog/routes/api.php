@@ -30,8 +30,18 @@ Route::group([
         Route::delete('logout', [AuthController::class, 'logout']);
         Route::get('user', [AuthController::class, 'user']);
     });
-    Route::post('like', [LikeController::class, 'like']);
 });
-
-Route::resource('posts', PostController::class);
+Route::group([
+    'middleware' => 'auth:api'
+], function() {
+    Route::get('posts/my-post', [PostController::class, 'myPosts']);
+    Route::resource('posts', PostController::class)->only([
+        'store','destroy'
+    ]);
+});
+Route::resource('posts', PostController::class)->only([
+    'index', 'show'
+]);
 Route::get('image/{avatar}', [ImageController::class, 'getImage']);
+Route::post('like', [LikeController::class, 'like']);
+
