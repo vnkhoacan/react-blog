@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Traits\ApiResponses;
+use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\LoginRequest;
 class AuthController extends Controller
 {
     use ApiResponses;
@@ -14,25 +16,14 @@ class AuthController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function register(Request $request): JsonResponse
+    public function register(RegisterRequest $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string',
-            'email' => 'required|string|email|unique:users',
-            'password' => 'required|string|confirmed'
-        ]);
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 'fails',
-                'message' => $validator->errors()->first(),
-                'errors' => $validator->errors()->toArray(),
-            ]);
-        }
         $user = new User([
             'name' => $request->input('name'),
             'email' => $request->input('email'),
             'password' => bcrypt($request->input('password'))
         ]);
+        $user['avatar'] = 'default_avatar.jpg';
         $user->save();
         return $this->successResponse([], 'Register successfull');
     }
@@ -40,25 +31,13 @@ class AuthController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function login(Request $request): JsonResponse
+    public function login(LoginRequest $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|string|email',
-            'password' => 'required|string',
-            'remember_me' => 'boolean'
-        ]);
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 'fails',
-                'message' => $validator->errors()->first(),
-                'errors' => $validator->errors()->toArray(),
-            ]);
-        }
         $credentials = request(['email', 'password']);
         if (!Auth::attempt($credentials)) {
             return response()->json([
                 'status' => 'fails',
-                'message' => 'Unauthorized'
+                'message' => 'Wrong email or password'
             ], 401);
         }
         $user = $request->user();

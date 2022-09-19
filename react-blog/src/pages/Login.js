@@ -1,46 +1,34 @@
-import { useState } from "react"
 import { Link } from "react-router-dom";
+import LoginForm from "../components/form/LoginForm";
+import { login } from "../actions/AuthActions";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { connect } from "react-redux";
 
-const Login = () => {
-    const initLogin = {
-        email: '',
-        password: '',
+const Login = ({message, login}) => {
+    const navigate = useNavigate();
+    const [loading, setLoading] = useState(false)
+    const submit = (values) => {
+        setLoading(true)
+        login(values).then(() => {
+            navigate('/')
+        }).catch(() => {
+            setLoading(false)
+        })
     }
-    const [login, setLogin] = useState(initLogin)
-    const handleChange = e => {
-        const { name, value } = e.target;
-        setLogin(prevState => ({
-            ...prevState,
-            [name]: value
-        }));
-    };
+    useEffect(() => {
+        let user = localStorage.getItem("user")
+        if(user) navigate('/')
+        // eslint-disable-next-line
+    }, [])
+
     return (
         <>
             <div className="container">
                 <h2 className="text-center mt-5 mb-5">LOGIN</h2>
                 <div className="row justify-content-center">
                     <div className="col-5">
-                        <div className="mb-3">
-                            <label className="form-label">Email:</label>
-                            <input
-                                type="email" 
-                                className="form-control"
-                                value={login.email}
-                                onChange={handleChange}
-                                name="email"
-                            />
-                        </div>
-                        <div className="mb-3">
-                            <label className="form-label">Password:</label>
-                            <input
-                                type="password"
-                                className="form-control"
-                                value={login.password}
-                                onChange={handleChange}
-                                name="password"
-                            />
-                        </div>
-                        <button type="submit" className="btn btn-primary">Login</button>
+                        <LoginForm onSubmit={submit} loading={loading} message={message}/>
                         <Link className="d-block" to={'/register'}>Register new account</Link>
                     </div>
                 </div>
@@ -49,4 +37,16 @@ const Login = () => {
     )
 }
 
-export default Login
+const mapStateToProps = state => {
+    return {
+        message: state.message.message
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        login: (user) => dispatch(login(user))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login)

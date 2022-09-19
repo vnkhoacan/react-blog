@@ -1,10 +1,11 @@
 import {
-    GET_ALL_POSTS
+    GET_ALL_POSTS, GET_POST
 } from '../constants';
 
 const initialState = {
     posts: [],
-    isFetchingPosts: true
+    isFetchingPosts: true,
+    currentPost: {}
 }
 
 const postReducer = (state = initialState, action) => {
@@ -14,6 +15,11 @@ const postReducer = (state = initialState, action) => {
                 ...state,
                 posts: action.payload,
                 isFetchingPosts: false
+            }
+        case GET_POST:
+            return {
+                ...state,
+                currentPost: action.payload
             }
         default:
             return state

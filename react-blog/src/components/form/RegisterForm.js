@@ -39,10 +39,10 @@ const renderField = ({ type, label, input, meta: { touched, error } }) => (
     </div>
 )
 
-const RegisterFormFunc = ({ handleSubmit, message }) => (
+const RegisterFormFunc = ({ handleSubmit, message, successful, loading }) => (
     <form onSubmit={handleSubmit}>
         { message &&
-            <div className="alert alert-success" role="alert">
+            <div className={successful ? "alert alert-success" : "alert alert-danger"} role="alert">
             {message}
             </div>
         }
@@ -50,7 +50,7 @@ const RegisterFormFunc = ({ handleSubmit, message }) => (
         <Field name="email" label="Email" component={renderField} type="email"/>
         <Field name="password" label="Password" component={renderField} type="password"/>
         <Field name="password_confirmation" label="Confirm Password" component={renderField} type="password"/>
-        <button className="btn btn-primary" type="submit">Register</button>
+        <button className="btn btn-primary" type="submit">{loading ? "Loading..." : "Register"}</button>
     </form>
 )
 

@@ -2,6 +2,7 @@ import React from "react";
 import { Field, reduxForm } from "redux-form";
 
 const validate = values => {
+    const errors = {}
     if(!values.email) {
         errors.email = 'Required'
     } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
@@ -27,11 +28,16 @@ const renderField = ({ type, label, input, meta: { touched, error } }) => (
     </div>
 )
 
-const LoginFormFunc = ({handleSubmit}) => (
+const LoginFormFunc = ({handleSubmit, loading, message}) => (
     <form onSubmit={handleSubmit}>
+        { message &&
+            <div className="alert alert-danger" role="alert">
+            {message}
+            </div>
+        }
         <Field name="email" label="Email" component={renderField} type="email"/>
         <Field name="password" label="Password" component={renderField} type="password"/>
-        <button className="btn btn-primary" type="submit">Login</button>
+        <button className="btn btn-primary" type="submit">{loading ? "Loading..." : "Login"}</button>
     </form>
 )
 

@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Post;
+use App\Models\Comment;
+use App\Models\Like;
+use App\Models\User;
 use App\Http\Traits\ApiResponses;
 
 class PostController extends Controller
@@ -40,7 +43,23 @@ class PostController extends Controller
      */
     public function show($id)
     {
-        //
+        $post = Post::findOrFail($id);
+        $comments = Comment::where('post_id', $id)->with('user')->get();
+        foreach($comments as $comment) {
+            $comment_like_array = Like::select('user_id')->where('object_id', $comment->id)->where('object_type', 2)->get()->toArray();
+            $comment_like = array_column($comment_like_array, 'user_id');
+            $comment['likes'] = $comment_like;
+        }
+        $likes_array = Like::select('user_id')->where('object_id', $id)->where('object_type', 1)->get()->toArray();
+        $likes = array_column($likes_array, 'user_id');
+        $author = User::findOrFail($post->user_id);
+
+        return $this->successResponse([
+            'post' => $post,
+            'author' => $author,
+            'comments' => $comments,
+            'likes' => $likes
+        ]);
     }
 
     /**

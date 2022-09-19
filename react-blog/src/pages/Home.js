@@ -14,6 +14,7 @@ const Home = ({ posts, isFetchingPosts, getAllPosts }) => {
 
     return(
         <>
+            <h1 className='text-center'>LIST POSTS</h1>
             <PostList>
                 { isEmpty
                 ? (isFetchingPosts ? <p>Loading...</p> : <p>Empty</p>)

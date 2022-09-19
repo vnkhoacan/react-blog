@@ -6,8 +6,13 @@ const getAll = () => {
     return axios.get(API_URL);
 }
 
+const getOne = (id) => {
+    return axios.get(API_URL + "/" + id)
+}
+
 const PostService = {
     getAll,
+    getOne,
 }
 
 export default PostService

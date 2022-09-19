@@ -4,6 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\ImageController;
+use App\Http\Controllers\LikeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,6 +30,8 @@ Route::group([
         Route::delete('logout', [AuthController::class, 'logout']);
         Route::get('user', [AuthController::class, 'user']);
     });
+    Route::post('like', [LikeController::class, 'like']);
 });
 
 Route::resource('posts', PostController::class);
+Route::get('image/{avatar}', [ImageController::class, 'getImage']);

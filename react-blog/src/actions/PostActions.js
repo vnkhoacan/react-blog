@@ -14,3 +14,16 @@ export const getAllPosts = () => async (dispatch) => {
         console.log(err);
     }
 }
+
+export const getPost = (id) => async (dispatch) => {
+    try {
+        const res = await PostService.getOne(id);
+
+        dispatch({
+            type: types.GET_POST,
+            payload: res.data.data
+        })
+    } catch (err) {
+        console.log(err)
+    }
+} 
