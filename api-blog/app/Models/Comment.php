@@ -15,6 +15,7 @@ class Comment extends Model
         'content',
         'user_id',
         'post_id',
+        'like_count',
         'path',
         'created_at',
     ];

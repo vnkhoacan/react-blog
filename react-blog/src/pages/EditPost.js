@@ -10,7 +10,16 @@ const EditPost = () => {
     const [message, setMessage]= useState('')
     const submit = (values) => {
         setIsLoading(true)
-        console.log(values)
+        PostService.update(values, id).then(() => {
+            navigate('/my-posts')
+        }).catch((error) => {
+            setMessage((
+                error.response &&
+                error.response.data &&
+                error.response.data.message) ||
+                error.message ||
+                error.toString())
+        })
         setIsLoading(false)
     }
     useEffect(() => {
@@ -19,11 +28,18 @@ const EditPost = () => {
         PostService.getOne(id).then((data) => {
             setPost(data.data.data.post)
         })
+        // eslint-disable-next-line
     }, [])
     return (
         <div className="container">
             <h1>Edit Post</h1>
-            <PostForm onSubmit={submit} initialValues={{title: post.title, content: post.content}}/>
+            <PostForm 
+                onSubmit={submit}
+                initialValues={{title: post.title, content: post.content}}
+                isLoading={isLoading}
+                message={message}
+                isEdit={true}
+            />
         </div>
     )
 }

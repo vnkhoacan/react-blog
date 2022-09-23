@@ -5,7 +5,7 @@ import { getUser, logout } from "../actions/AuthActions"
 import { BASE_URL } from "../constants"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouse, faHouseUser} from "@fortawesome/free-solid-svg-icons";
-const Navbar = ({ user, getUser, logout }) => {
+const Header = ({ user, getUser, logout }) => {
     const navigate = useNavigate()
     const handleLogout = () => {
         logout()
@@ -78,4 +78,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Navbar)
+export default connect(mapStateToProps, mapDispatchToProps)(Header)

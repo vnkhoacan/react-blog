@@ -19,6 +19,10 @@ const create = (data) => {
     return axios.post(API_URL, data, { headers: authHeader()})
 }
 
+const update = (data, id) => {
+    return axios.put(API_URL + "/" + id, data, { headers: authHeader()})
+}
+
 const destroy = (id) => {
     return axios.delete(API_URL + "/" + id, { headers: authHeader()})
 }
@@ -28,6 +32,7 @@ const PostService = {
     getOne,
     getMy,
     create,
+    update,
     destroy,
 }
 

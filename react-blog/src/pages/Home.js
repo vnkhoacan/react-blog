@@ -3,6 +3,7 @@ import { getAllPosts } from '../actions/PostActions';
 import PostItem from '../components/post/PostItem';
 import PostList from '../components/post/PostList';
 import { connect } from "react-redux";
+import CommonSprinner from '../components/sprinners/CommonSprinner';
 
 const Home = ({ posts, isFetchingPosts, getAllPosts }) => {
     const isEmpty = posts.length === 0
@@ -17,7 +18,9 @@ const Home = ({ posts, isFetchingPosts, getAllPosts }) => {
             <h1 className='text-center'>LIST POSTS</h1>
             <PostList>
                 { isEmpty
-                ? (isFetchingPosts ? <p>Loading...</p> : <p>Empty</p>)
+                ? (isFetchingPosts
+                    ? <CommonSprinner/>
+                    : <p className="mb-0 text-center fw-bold">Empty</p> )
                 : posts.map(post => 
                     <PostItem key={post.id} post={post}/>
                 )}

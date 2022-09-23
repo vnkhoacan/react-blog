@@ -1,5 +1,9 @@
 import React from "react";
-import { Field, reduxForm } from "redux-form";
+import { Field, formValueSelector, reduxForm } from "redux-form";
+import { connect } from 'react-redux';
+import SubmitButton from "../button/SubmitButton";
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 const validate = values => {
     const errors = {}
@@ -17,7 +21,19 @@ const renderField = ({ type, label, inputType, input, meta: { touched, error } }
         <label className="form-label">{label}</label>
         <br/>
         { inputType === "textarea"
-        ? <textarea {...input} rows={5} className={`form-control ${touched && error && ` is-invalid`}`}/>
+        ?   <CKEditor
+                config={{ckfinder: {
+                    // Upload the images to the server using the CKFinder QuickUpload command.
+                    uploadUrl: 'https://example.com/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Images&responseType=json',
+                }}}
+                className={`form-control ${touched && error && ` is-invalid`}`}
+                data={input.value}
+                editor={ ClassicEditor }
+                onChange={(event, editor) => {
+                        return input.onChange(editor.getData())
+                    }
+                }
+            />
         : <input {...input} className={`form-control ${touched && error && ` is-invalid`}`} type={type}/>}
         {touched && error &&
         (
@@ -28,7 +44,7 @@ const renderField = ({ type, label, inputType, input, meta: { touched, error } }
     </div>
 )
 
-const PostFormFunc = ({handleSubmit, isLoading, message, post}) => (
+const PostFormFunc = ({title, content, handleSubmit, isLoading, message, isEdit}) => (
     <form onSubmit={handleSubmit}>
         { message &&
             <div className="alert alert-danger" role="alert">
@@ -37,21 +53,28 @@ const PostFormFunc = ({handleSubmit, isLoading, message, post}) => (
         }
         <Field name="title" label="Title" component={renderField} type="text"/>
         <Field name="content" label="Content" component={renderField} inputType="textarea"/>
-        <button className="btn btn-primary" type="submit">
-            {isLoading ? (
-                <button class="btn btn-primary" type="button" disabled>
-                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                    Loading...
-                </button>
-            ) : post ? "Edit" : "Add"}
-        </button>
+        <SubmitButton isLoading={isLoading} disabled={title && content ? false : true}>
+            {isEdit ? "Edit" : "Add"}
+        </SubmitButton>
     </form>
 )
 
-const PostForm = reduxForm({
+let PostForm = reduxForm({
     form: 'post',
     validate,
     enableReinitialize: true
 })(PostFormFunc)
+
+const selector = formValueSelector('post')
+PostForm = connect(
+    state => {
+        const title = selector(state, 'title')
+        const content = selector(state, 'content')
+        return {
+            title,
+            content
+        }
+    }
+)(PostForm)
 
 export default PostForm

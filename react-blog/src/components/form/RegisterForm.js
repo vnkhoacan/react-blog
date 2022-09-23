@@ -1,5 +1,6 @@
 import React from "react";
 import { Field, reduxForm } from "redux-form";
+import SubmitButton from "../button/SubmitButton";
 
 const validate = values => {
     const errors = {}
@@ -39,18 +40,18 @@ const renderField = ({ type, label, input, meta: { touched, error } }) => (
     </div>
 )
 
-const RegisterFormFunc = ({ handleSubmit, message, successful, loading }) => (
+const RegisterFormFunc = ({ handleSubmit, message, successful, isLoading }) => (
     <form onSubmit={handleSubmit}>
         { message &&
             <div className={successful ? "alert alert-success" : "alert alert-danger"} role="alert">
-            {message}
+                {message}
             </div>
         }
         <Field name="name" label="Name" component={renderField} type="text"/>
         <Field name="email" label="Email" component={renderField} type="email"/>
         <Field name="password" label="Password" component={renderField} type="password"/>
         <Field name="password_confirmation" label="Confirm Password" component={renderField} type="password"/>
-        <button className="btn btn-primary" type="submit">{loading ? "Loading..." : "Register"}</button>
+        <SubmitButton isLoading={isLoading}>Register</SubmitButton>
     </form>
 )
 

@@ -29,7 +29,11 @@ const AddPost = () => {
     return (
         <div className="container">
             <h1 className="text-center">New Post</h1>
-            <PostForm onSubmit={submit} isLoading={isLoading} message={message}/>
+            <PostForm
+                onSubmit={submit}
+                isLoading={isLoading}
+                message={message}
+            />
         </div>
     )
 }

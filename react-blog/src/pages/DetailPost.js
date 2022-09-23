@@ -1,16 +1,19 @@
-import { useEffect, useState } from "react"
-import { useParams } from "react-router-dom"
-import { connect } from "react-redux"
-import { getPost } from "../actions/PostActions"
-import moment from 'moment'
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendar, faUser, faThumbsUp } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom"
-import PostService from "../services/post.service"
-import { BASE_URL } from "../constants"
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { connect } from "react-redux";
+import PostService from "../services/post.service";
+import CommentService from "../services/comment.service";
+import CommonSprinner from "../components/sprinners/CommonSprinner";
+import PostBreadcrumb from "../components/breadcrumb/PostBreadcrumb";
+import LikeGroup from "../components/like/LikeGroup";
+import CommentList from "../components/comment/CommentList";
+import CommentItem from "../components/comment/CommentItem";
+import { LIKE_TYPE } from "../constants";
+import CommentForm from "../components/form/CommentForm";
 
-const DetailPost = ({ user, getPost }) => {
+const DetailPost = ({ user }) => {
     let { id } = useParams()
+    const isLoggedIn = user ? true : false
     const [loading, setLoading] = useState(false)
     const [ post, setPost ] = useState({})
     const [ author, setAuthor ] = useState({})
@@ -28,101 +31,88 @@ const DetailPost = ({ user, getPost }) => {
             setLoading(false)
         })
     }
-    useEffect( () => {
+    const handleAddComment = (path, content) => {
+        CommentService.create({
+            path: path,
+            post_id: post.id,
+            content: content
+        }).then((data) => {
+            setComments([
+                data.data.data,
+                ...comments,
+            ])
+        }).catch((error) => {
+            console.log(error)
+        })
+    }
+    const handleDeleteComment = (id) => {
+        CommentService.destroy(id).then(() => {
+            let updateComments = comments
+            let deletedComment = updateComments.find(x => x.id === id)
+            updateComments = updateComments.filter(
+                (comment) => !(comment.id === id || comment.path.includes(deletedComment.path + ".")))
+            setComments([
+                ...updateComments
+            ])
+        }) 
+    }
+    useEffect(() => {
         fetchPost()
         // eslint-disable-next-line
     }, [])
 
     return (
-        <>
-            {
-                loading
-                ? <p>Loading....</p>
-                : (
-                    <div className="container">
-                        <h1 className="display-1">{post.title}</h1>
-                        <nav aria-label="breadcrumb">
-                            <ol className="breadcrumb">
-                                <li className="breadcrumb-item">
-                                    <FontAwesomeIcon icon={faUser} className="me-2"/>
-                                    <Link to={"/profile" + author.id}>{author.name}</Link>
-                                </li>
-                                <li className="breadcrumb-item">
-                                    <FontAwesomeIcon icon={faCalendar} className="me-2"/>
-                                    <p className="d-inline">{moment(post.created_at).format('DD/MM/YYYY HH:mm')}</p>
-                                </li>
-                            </ol>
-                        </nav>
-                        <hr/>
-                        <p>{post.content}</p>
-                        <hr/>
-                        <div>
-                            {post.like_count}
-                            <button className={isLiked ? ' btn btn-sm ms-2 btn-primary' : ' btn btn-sm ms-2 btn-outline-primary'}>
-                                <FontAwesomeIcon icon={faThumbsUp} className="me-2"/>like
-                            </button>
-                        </div>
-                        <hr/>
-                        <div>
-                            <h3>COMMENTS</h3>
-                            <div>
-                                <textarea className="form-control mb-1" rows={2}></textarea>
-                                <button className="btn btn-primary">Comment</button>
-                            </div>
-                            <div className="mt-4">
-                                { comments.length > 0
-                                    && comments.map((comment) => {
-                                        if(!comment.path.includes(".")) {
-                                            return (
-                                                <div key={comment.id} className="d-flex mb-3">
-                                                    <div className="me-3">
-                                                        <img className="rounded-circle" height="30" alt="avatar" src={BASE_URL+ "image/" + comment.user.avatar}/>
-                                                    </div>
-                                                    <div className="flex-fill">
-                                                        <div className="mb-3">
-                                                            <p className="fs-6 fw-bold mb-0">{comment.user.name}</p>
-                                                            <p className="mb-1">{comment.content}</p>
-                                                            <button className={comment.likes.includes(user.id) ? "btn btn-sm btn-primary" : "btn btn-sm btn-outline-primary"}>
-                                                                <FontAwesomeIcon icon={faThumbsUp} className="me-2"/>like
-                                                            </button>
-                                                        </div>
-                                                        { comments.map((c) => {
-                                                            if(c.path.includes(comment.id + ".")) {
-                                                                return (
-                                                                    <div key={c.id}>
-                                                                        <hr/>
-                                                                        <div className="d-flex">
-                                                                            <div className="me-3">
-                                                                                <img className="rounded-circle" height="30" alt="avatar" src={BASE_URL+ "image/" + c.user.avatar}/>
-                                                                            </div>
-                                                                            <div className="mb-3 flex-fill">
-                                                                                <p className="fs-6 fw-bold mb-0">{c.user.name}</p>
-                                                                                <p className="mb-1">{c.content}</p>
-                                                                                <button className={c.likes.includes(user.id) ? "btn btn-sm btn-primary" : "btn btn-sm btn-outline-primary"}>
-                                                                                    <FontAwesomeIcon icon={faThumbsUp} className="me-2"/>like
-                                                                                </button>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                )
-                                                            } else {
-                                                                return ""
-                                                            } 
-                                                        })}
-                                                        <hr/>
-                                                    </div>
-                                                </div>
-                                            )
-                                        } else {
-                                            return ""
-                                        }
-                                    })}
-                            </div>
-                        </div>
-                    </div>
-                )
-            }
-        </>
+        <div className="container">
+        {loading
+        ? <CommonSprinner/>
+        : ( <div>
+                <h1 className="text-break ">{post.title}</h1>
+                <PostBreadcrumb author={author} post={post}/>
+                <hr/>
+                <div dangerouslySetInnerHTML={{__html: post.content}}></div>
+                <hr/>
+                <LikeGroup object={post} isLiked={isLiked} isLoggedIn={isLoggedIn} type={LIKE_TYPE.post}/>
+                <hr/>
+                <h3>COMMENTS</h3>
+                { isLoggedIn && <CommentForm path="" handleAddComment={handleAddComment}/>}
+                <CommentList>
+                { comments.length > 0
+                && comments.map((comment) => {
+                    if(!comment.path.includes(".")) {
+                        return (
+                            <CommentItem
+                                key={comment.id}
+                                comment={comment}
+                                isLiked={user && comment.likes.includes(user.id)}
+                                user={user}
+                                handleAddComment={handleAddComment}
+                                handleDeleteComment={handleDeleteComment}
+                            >
+                            { comments.map((c) => {
+                                if(c.path.includes(comment.path + ".")) {
+                                    return (
+                                        <CommentItem
+                                            key={c.id}
+                                            comment={c}
+                                            isLiked={user && c.likes.includes(user.id)}
+                                            user={user}
+                                            handleDeleteComment={handleDeleteComment}
+                                        />
+                                    )
+                                } else {
+                                    return ""
+                                } 
+                            })}
+                            </CommentItem>
+                        )
+                    } else {
+                        return ""
+                    }
+                })}
+                </CommentList>
+            </div>
+        )}
+        </div>
     )
 }
 
@@ -132,10 +122,4 @@ const mapStateToProps = state => {
     }
 }
 
-const mapDispatchToProps = dispatch => {
-    return {
-        getPost: (id) => dispatch(getPost(id)),
-    };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(DetailPost)
+export default connect(mapStateToProps, null)(DetailPost)

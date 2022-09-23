@@ -6,6 +6,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\LikeController;
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,12 +38,18 @@ Route::group([
 ], function() {
     Route::get('posts/my-post', [PostController::class, 'myPosts']);
     Route::resource('posts', PostController::class)->only([
-        'store','destroy'
+        'store','destroy','update'
+    ]);
+    Route::post('like', [LikeController::class, 'like']);
+    Route::resource('comments', CommentController::class)->only([
+        'store', 'destroy'
     ]);
 });
 Route::resource('posts', PostController::class)->only([
     'index', 'show'
 ]);
+Route::resource('users', UserController::class)->only([
+    'show'
+]);
 Route::get('image/{avatar}', [ImageController::class, 'getImage']);
-Route::post('like', [LikeController::class, 'like']);
 

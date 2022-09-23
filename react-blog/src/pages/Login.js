@@ -8,13 +8,13 @@ import { connect } from "react-redux";
 
 const Login = ({message, login, clearMessage}) => {
     const navigate = useNavigate();
-    const [loading, setLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
     const submit = (values) => {
-        setLoading(true)
+        setIsLoading(true)
         login(values).then(() => {
             navigate('/')
         }).catch(() => {
-            setLoading(false)
+            setIsLoading(false)
         })
     }
     useEffect(() => {
@@ -32,7 +32,7 @@ const Login = ({message, login, clearMessage}) => {
                 <h2 className="text-center mt-5 mb-5">LOGIN</h2>
                 <div className="row justify-content-center">
                     <div className="col-5">
-                        <LoginForm onSubmit={submit} loading={loading} message={message}/>
+                        <LoginForm onSubmit={submit} isLoading={isLoading} message={message}/>
                         <Link className="d-block" to={'/register'}>Register new account</Link>
                     </div>
                 </div>

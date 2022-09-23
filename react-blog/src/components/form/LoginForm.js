@@ -1,5 +1,6 @@
 import React from "react";
 import { Field, reduxForm } from "redux-form";
+import SubmitButton from "../button/SubmitButton";
 
 const validate = values => {
     const errors = {}
@@ -28,7 +29,7 @@ const renderField = ({ type, label, input, meta: { touched, error } }) => (
     </div>
 )
 
-const LoginFormFunc = ({handleSubmit, loading, message}) => (
+const LoginFormFunc = ({handleSubmit, isLoading, message}) => (
     <form onSubmit={handleSubmit}>
         { message &&
             <div className="alert alert-danger" role="alert">
@@ -37,7 +38,7 @@ const LoginFormFunc = ({handleSubmit, loading, message}) => (
         }
         <Field name="email" label="Email" component={renderField} type="email"/>
         <Field name="password" label="Password" component={renderField} type="password"/>
-        <button className="btn btn-primary" type="submit">{loading ? "Loading..." : "Login"}</button>
+        <SubmitButton isLoading={isLoading}>Login</SubmitButton>
     </form>
 )
 

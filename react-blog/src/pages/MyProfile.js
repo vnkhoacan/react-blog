@@ -1,7 +1,9 @@
 import { useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { connect } from "react-redux";
-import { BASE_URL } from '../constants';
+import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import ProfileContent from '../components/profile/ProfileContent';
 const MyProfile = ({ user }) => {
     const navigate = useNavigate()
     useEffect(() => {
@@ -9,62 +11,15 @@ const MyProfile = ({ user }) => {
         // eslint-disable-next-line
     }, [])
     return (
-        <section style={{backgroundColor: "#eee", height: "90vh"}}>
-            <div className="container py-5">
-                <div className="row">
-                    <div className="col-lg-4">
-                        <div className="card mb-4">
-                            <div className="card-body text-center">
-                                <img src={BASE_URL + "image/" + user.avatar} alt="avatar"
-                                className="rounded-circle img-fluid"style={{width: "150px"}}/>
-                                <h5 className="my-3">{user.name}</h5>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-lg-8">
-                        <div className="card mb-4">
-                            <div className="card-body">
-                                <div className="row">
-                                    <div className="col-sm-3">
-                                        <p className="mb-0">Name</p>
-                                    </div>
-                                    <div className="col-sm-9">
-                                        <p className="text-muted mb-0">{user.name}</p>
-                                    </div>
-                                </div>
-                                <hr/>
-                                <div className="row">
-                                    <div className="col-sm-3">
-                                        <p className="mb-0">Email</p>
-                                    </div>
-                                    <div className="col-sm-9">
-                                        <p className="text-muted mb-0">{user.email}</p>
-                                    </div>
-                                </div>
-                                <hr/>
-                                <div className="row">
-                                    <div className="col-sm-3">
-                                        <p className="mb-0">Phone</p>
-                                    </div>
-                                    <div className="col-sm-9">
-                                        <p className="text-muted mb-0">{user.phone}</p>
-                                    </div>
-                                </div>
-                                <hr/>
-                                <div className="row">
-                                    <div className="col-sm-3">
-                                        <p className="mb-0">Address</p>
-                                    </div>
-                                    <div className="col-sm-9">
-                                        <p className="text-muted mb-0">{user.address}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <div style={{backgroundColor: "#eee", height: "90vh"}}>
+            <div className='container'>
+                <ProfileContent user={user}/>
+                <button className='btn btn-primary float-end'>
+                    <FontAwesomeIcon icon={faPenToSquare} className="me-2"/>
+                    Edit
+                </button>
             </div>
-        </section>
+        </div>
     )
 }
 

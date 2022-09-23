@@ -7,28 +7,29 @@ import { useEffect, useState } from "react";
 
 const Register = ({message, register, clearMessage}) => {
     const [successful, setSuccessful] = useState(false)
-    const [loading, setLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
     const submit = (values) => {
-        setLoading(true)
+        setIsLoading(true)
         register(values).then(() => {
             setSuccessful(true)
         }).catch(() => {
             setSuccessful(false)
         })
-        setLoading(false)
+        setIsLoading(false)
     }
     useEffect(() => {
         return () => {
             clearMessage()
         }
-    })
+        // eslint-disable-next-line
+    },[])
 
     return (
         <div className="container">
             <h1 className="text-center">REGISTER</h1>
             <div className="row justify-content-center">
                 <div className="col-5">
-                    <RegisterForm onSubmit={submit} message={message} successful={successful} loading={loading}/>
+                    <RegisterForm onSubmit={submit} message={message} successful={successful} isLoading={isLoading}/>
                     <Link to={'/login'}>Login now!</Link>
                 </div>
             </div>

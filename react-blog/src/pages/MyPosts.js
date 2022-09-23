@@ -6,6 +6,8 @@ import { useNavigate } from "react-router-dom";
 import PostService from "../services/post.service";
 import { Link } from "react-router-dom";
 import moment from 'moment';
+import MyPostTable from "../components/table/MyPostTable";
+import CommonSprinner from "../components/sprinners/CommonSprinner";
 const MyPosts = ({ user }) => {
     const navigate = useNavigate()
     const [isLoading, setIsLoading] = useState(false)
@@ -32,50 +34,41 @@ const MyPosts = ({ user }) => {
     return (
         <div className="container">
             <h1 className="text-center">My Posts</h1>
-            <Link className="btn btn-primary mb-3" to={'/post/add'}>
+            <Link className="btn btn-dark mb-3" to={'/post/add'}>
                 <FontAwesomeIcon icon={faSquarePlus} className="me-2"/>
                 New post
             </Link>
-            <table className="table table-striped table-hover table-bordered align-middle">
-                <thead className="table-dark">
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Title</th>
-                        <th scope="col">Content</th>
-                        <th scope="col">Created at</th>
-                        <th scope="col">Action</th>
-                    </tr>
-                </thead>
-                <tbody className="table-group-divider">
-                    { isLoading 
-                    ?   <tr><td colSpan={5}>
-                            <div className="d-flex justify-content-center">
-                                <div className="spinner-border" role="status">
-                                    <span className="visually-hidden">Loading...</span>
-                                </div>
-                            </div>
+            <MyPostTable>
+            { isLoading 
+                ? <tr><td colSpan={6}><CommonSprinner/></td></tr>
+                : posts.length === 0
+                    ?   <tr><td colSpan={6}>
+                            <p className="mb-0 text-center fw-bold">Empty</p>
                         </td></tr>
-                    : !posts
-                        ? <tr><td colSpan={5}>Empty</td></tr>
-                        : posts.map((post) => (
-                            <tr key={post.id}>
-                                <th scope="row">{post.id}</th>
-                                <td>{post.title}</td>
-                                <td className="text-truncate" style={{maxWidth:"250px"}}>{post.content}</td>
-                                <td>{moment(post.created_at).format('DD/MM/YYYY HH:mm')}</td>
-                                <td>
-                                    <Link className="btn btn-success me-2" to={"/post/"+post.id}>
-                                        <FontAwesomeIcon icon={faEye}/>
-                                    </Link>
-                                    <Link className="btn btn-primary me-2" to={"/post/edit/"+post.id}>
-                                        <FontAwesomeIcon icon={faPenToSquare}/>
-                                    </Link>
-                                    <button className="btn btn-danger" onClick={() => handleDelete(post.id)}><FontAwesomeIcon icon={faTrash}/></button>
-                                </td>
-                            </tr>
-                        ))}
-                </tbody>
-            </table>
+                    : posts.map((post) => (
+                        <tr key={post.id}>
+                            <th scope="row">{post.id}</th>
+                            <td className="text-truncate" style={{maxWidth:"250px"}}>{post.title}</td>
+                            <td>{post.like_count}</td>
+                            <td>{post.comment_count}</td>
+                            <td>{moment(post.created_at).format('DD/MM/YYYY HH:mm')}</td>
+                            <td>
+                                <Link className="btn btn-success me-2" to={"/post/"+post.id}>
+                                    <FontAwesomeIcon icon={faEye}/>
+                                </Link>
+                                <Link className="btn btn-primary me-2" to={"/post/edit/"+post.id}>
+                                    <FontAwesomeIcon icon={faPenToSquare}/>
+                                </Link>
+                                <button
+                                    className="btn btn-danger"
+                                    onClick={() => handleDelete(post.id)}
+                                >
+                                    <FontAwesomeIcon icon={faTrash}/>
+                                </button>
+                            </td>
+                        </tr>
+                    ))}
+            </MyPostTable>
         </div>
     )
 }

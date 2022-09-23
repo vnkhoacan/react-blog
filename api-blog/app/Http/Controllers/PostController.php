@@ -21,14 +21,14 @@ class PostController extends Controller
      */
     public function index()
     {
-        $post = Post::all();
+        $post = Post::orderBy('created_at', 'DESC')->get();
 
         return $this->successResponse($post);
     }
 
     public function myPosts()
     {
-        $posts = Post::where('user_id', Auth::guard('api')->user()->id)->get();
+        $posts = Post::where('user_id', Auth::guard('api')->user()->id)->orderBy('created_at', 'DESC')->get();
 
         return $this->successResponse($posts);
     }
@@ -60,7 +60,7 @@ class PostController extends Controller
     public function show($id)
     {
         $post = Post::findOrFail($id);
-        $comments = Comment::where('post_id', $id)->with('user')->get();
+        $comments = Comment::where('post_id', $id)->with('user')->orderBy('created_at', 'DESC')->get();
         foreach($comments as $comment) {
             $comment_like_array = Like::select('user_id')->where('object_id', $comment->id)->where('object_type', 2)->get()->toArray();
             $comment_like = array_column($comment_like_array, 'user_id');
@@ -114,6 +114,17 @@ class PostController extends Controller
     public function destroy($id)
     {
         $post = Post::find($id);
+        $comments = Comment::where('post_id', $post->id)->get();
+        foreach($comments as $comment)
+        {
+            Like::where('object_type', config('constants.likes.object_type.comment'))
+                ->where('object_id', $comment->id)
+                ->delete();
+        }
+        Comment::where('post_id', $post->id)->delete();
+        Like::where('object_type', config('constants.likes.object_type.post'))
+            ->where('object_id', $post->id)
+            ->delete();
         $post->delete();
         return $this->successResponse('');
     }
