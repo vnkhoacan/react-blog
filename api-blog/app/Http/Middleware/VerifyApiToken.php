@@ -16,7 +16,6 @@ class VerifyApiToken
      */
     public function handle(Request $request, Closure $next)
     {
-        return 'ok';
         return $next($request);
     }
 }
