@@ -2,7 +2,7 @@
 
 namespace App\Http\Responses;
 
-use Ecs\L8Core\Core\BaseResponse;
+use App\Core\BaseResponse;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

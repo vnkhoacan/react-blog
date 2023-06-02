@@ -3,7 +3,7 @@
 namespace App\Http\Responses\Exceptions;
 
 use App\Exceptions\BusinessException;
-use Ecs\L8Core\Core\BaseResponse;
+use App\Core\BaseResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;

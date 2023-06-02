@@ -2,7 +2,7 @@
 
 namespace App\Http\Responses\Exceptions;
 
-use Ecs\L8Core\Core\BaseResponse;
+use App\Core\BaseResponse;
 use Illuminate\Http\Response;
 
 class UnauthenticatedResponse extends BaseResponse

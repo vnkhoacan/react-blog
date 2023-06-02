@@ -48,6 +48,7 @@ class AuthController extends Controller
         }
         $token->save();
         $user['access_token'] = $tokenResult->accessToken;
+        $user['token_type'] = 'Bearer';
         return response()->json($user);
     }
     /**

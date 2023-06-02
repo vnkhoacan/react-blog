@@ -1,10 +1,11 @@
 import {
-    GET_ALL_POSTS, GET_POST
+    GET_ALL_POSTS, GET_POST, IS_FETCH_POST
 } from '../constants';
 
 const initialState = {
     posts: [],
-    isFetchingPosts: true,
+    post: {},
+    isFetching: false,
     currentPost: {}
 }
 
@@ -14,12 +15,18 @@ const postReducer = (state = initialState, action) => {
             return {
                 ...state,
                 posts: action.payload,
-                isFetchingPosts: false
+                isFetching: false
             }
         case GET_POST:
             return {
                 ...state,
-                currentPost: action.payload
+                post: action.payload,
+                isFetching: false
+            }
+        case IS_FETCH_POST:
+            return {
+                ...state,
+                isFetching: true
             }
         default:
             return state

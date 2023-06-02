@@ -3,8 +3,8 @@
 namespace App\Traits;
 
 use Illuminate\Support\Collection;
-use Potatos\Contracts\CriteriaInterface;
-use Potatos\Exceptions\RepositoryException;
+use App\Contracts\CriteriaInterface;
+use App\Exceptions\RepositoryException;
 
 trait HasCriteria
 {

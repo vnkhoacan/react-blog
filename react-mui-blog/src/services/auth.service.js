@@ -8,6 +8,7 @@ const login = ({email, password}) => {
         .then((response) => {
             if(response.data.access_token) {
                 localStorage.setItem("access_token", JSON.stringify(response.data.access_token))
+                localStorage.setItem("token_type", JSON.stringify(response.data.token_type))
             }
             return response.data
         })
@@ -15,6 +16,7 @@ const login = ({email, password}) => {
 
 const logout = () => {
     localStorage.removeItem("access_token")
+    localStorage.removeItem("token_type")
 }
 
 const register = ({name, email, password, password_confirmation}) => {

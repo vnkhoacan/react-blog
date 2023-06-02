@@ -3,6 +3,10 @@ import PostService from '../services/post.service';
 
 export const getAllPosts = () => async (dispatch) => {
     try {
+        dispatch({
+            type: types.IS_FETCH_POST,
+        })
+
         const res = await PostService.getAll();
 
         dispatch({
@@ -17,6 +21,10 @@ export const getAllPosts = () => async (dispatch) => {
 
 export const getPost = (id) => async (dispatch) => {
     try {
+        dispatch({
+            type: types.IS_FETCH_POST,
+        })
+
         const res = await PostService.getOne(id);
 
         dispatch({

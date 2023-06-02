@@ -8,7 +8,7 @@ const getAll = () => {
 }
 
 const getOne = (id) => {
-    return axios.get(API_URL + "/" + id)
+    return axios.get(API_URL + "/" + id, { headers: authHeader()})
 }
 
 const getMy = () => {

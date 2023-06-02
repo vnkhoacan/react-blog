@@ -26,6 +26,8 @@ class StorePostRequest extends FormRequest
         return [
             'title' => 'required|string',
             'content' => 'required|string',
+            'categories' => 'array',
+            'categories.*.id' => 'exists:categories,id',
         ];
     }
 }

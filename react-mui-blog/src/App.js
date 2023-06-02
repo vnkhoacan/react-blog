@@ -10,6 +10,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import AuthVerify from "./common/AuthVerify";
 import { logout } from './actions/AuthActions';
 import { connect } from "react-redux";
+import CreatePost from './pages/CreatePost';
+import DetailPost from './pages/DetailPost';
+import NotFoundPage from './pages/NotFoundPage';
 
 function App({logout}) {
 
@@ -21,6 +24,10 @@ function App({logout}) {
           <Route path='login' element={<Login/>}/>
           <Route path='regist' element={<Regist/>}/>
           <Route path='posts' element={<ListPost/>}/>
+          <Route path='post/create' element={<CreatePost/>}/>
+          <Route path='post/:postId' element={<DetailPost/>}/>
+          <Route path='not-found' element={<NotFoundPage/>}/>
+          <Route path='*' element={<NotFoundPage/>}/>
         </Routes>
       <Footer/>
       <ToastContainer

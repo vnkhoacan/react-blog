@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\LikeController;
@@ -53,3 +54,6 @@ Route::resource('users', UserController::class)->only([
 ]);
 Route::get('image/{avatar}', [ImageController::class, 'getImage']);
 
+Route::resource('categories', CategoryController::class)->only([
+    'index'
+]);

@@ -11,17 +11,19 @@ import { connect } from "react-redux";
 import { useEffect, useState } from 'react';
 import { Avatar, IconButton, Menu, MenuItem, Tooltip } from '@mui/material';
 import * as React from 'react';
+import CreateIcon from '@mui/icons-material/Create';
 
 const Header = ({ user, getUser, logout }) => {
     const navigate = useNavigate();
-    const [anchorElUser, setAnchorElUser] = useState(null);
+    const [anchorEl, setAnchorEl] = useState(null);
+    const open = Boolean(anchorEl);
 
     const handleOpenUserMenu = (event) => {
-        setAnchorElUser(event.currentTarget);
+        setAnchorEl(event.currentTarget);
     };
 
     const handleCloseUserMenu = () => {
-        setAnchorElUser(null);
+        setAnchorEl(null);
     };
 
     const handleLogout = () => {
@@ -57,31 +59,19 @@ const Header = ({ user, getUser, logout }) => {
                     BLOG
                     </Typography>
                     <Box sx={{ flexGrow: 1, display: { xs: 'flex'}}}>
-                        <Button
-                            key='Home'
-                            sx={{ my: 2, color: 'white', display: 'block' }}
-                        >
-                            Home
-                        </Button>
-                        <Button
-                            key='About'
-                            sx={{ my: 2, color: 'white', display: 'block' }}
-                        >
-                            About
-                        </Button>
-                        <Button
-                            component={ Link }
-                            to='/posts'
-                            key='Posts'
-                            sx={{ my: 2, color: 'white', display: 'block' }}
-                        >
-                            Posts
-                        </Button>
                     </Box>
                     {
                         user
                         ? (
                             <Box sx={{ flexGrow: 0 }}>
+                                <Button
+                                variant="outlined"
+                                sx={{marginRight: 2, textTransform: "none"}}
+                                component={ Link }
+                                to="/post/create"
+                                >
+                                    <CreateIcon fontSize={"small"} sx={{marginRight: 1}}/>Viết bài
+                                </Button>
                                 <Tooltip title="Open settings">
                                     <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                                         <Avatar alt="Remy Sharp" src="" />
@@ -90,7 +80,6 @@ const Header = ({ user, getUser, logout }) => {
                                 <Menu
                                     sx={{ mt: '45px' }}
                                     id="menu-appbar"
-                                    anchorEl={anchorElUser}
                                     anchorOrigin={{
                                         vertical: 'top',
                                         horizontal: 'right',
@@ -100,8 +89,9 @@ const Header = ({ user, getUser, logout }) => {
                                         vertical: 'top',
                                         horizontal: 'right',
                                     }}
-                                    open={Boolean(anchorElUser)}
+                                    open={open}
                                     onClose={handleCloseUserMenu}
+                                    anchorEl={anchorEl}
                                 >
                                     <MenuItem key={'profile'}>
                                         <Typography textAlign="center">Profile</Typography>

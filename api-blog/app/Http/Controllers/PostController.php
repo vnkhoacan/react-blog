@@ -9,7 +9,13 @@ use App\Models\Comment;
 use App\Models\Like;
 use App\Models\User;
 use App\Http\Traits\ApiResponses;
+use App\Services\Api\Post\ListPostService;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\Api\Post\ListPostRequest;
+use App\Http\Resources\Post\DetailPostResource;
+use App\Http\Resources\Post\ListPostCollection;
+use App\Services\Api\Post\DetailPostService;
+use App\Services\Api\Post\StorePostService;
 
 class PostController extends Controller
 {
@@ -19,11 +25,13 @@ class PostController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(ListPostRequest $request)
     {
-        $post = Post::orderBy('created_at', 'DESC')->get();
+        $result = resolve(ListPostService::class)
+            ->setRequest($request)
+            ->handle();
 
-        return $this->successResponse($post);
+        return new ListPostCollection($result);
     }
 
     public function myPosts()
@@ -41,14 +49,11 @@ class PostController extends Controller
      */
     public function store(StorePostRequest $request)
     {
-        $post = new Post;
-        $post->title = $request->get('title');
-        $post->content = $request->get('content');
-        $post->user_id = Auth::guard('api')->user()->id;
-        $post->like_count = 0;
-        $post->comment_count = 0;
-        $post->save();
-        return $this->successResponse('');
+        $result = resolve(StorePostService::class)
+            ->setRequest($request)
+            ->handle();
+
+        return response()->json(['id' => $result->id]);
     }
 
     /**
@@ -59,23 +64,31 @@ class PostController extends Controller
      */
     public function show($id)
     {
-        $post = Post::findOrFail($id);
-        $comments = Comment::where('post_id', $id)->with('user')->orderBy('created_at', 'DESC')->get();
-        foreach($comments as $comment) {
-            $comment_like_array = Like::select('user_id')->where('object_id', $comment->id)->where('object_type', 2)->get()->toArray();
-            $comment_like = array_column($comment_like_array, 'user_id');
-            $comment['likes'] = $comment_like;
-        }
-        $likes_array = Like::select('user_id')->where('object_id', $id)->where('object_type', 1)->get()->toArray();
-        $likes = array_column($likes_array, 'user_id');
-        $author = User::findOrFail($post->user_id);
+        $post = resolve(DetailPostService::class)
+            ->setModel($id)
+            ->handle();
 
-        return $this->successResponse([
-            'post' => $post,
-            'author' => $author,
-            'comments' => $comments,
-            'likes' => $likes
-        ]);
+        $post->load('comments', 'author');
+
+        return new DetailPostResource($post);
+
+        // $post = Post::findOrFail($id);
+        // $comments = Comment::where('post_id', $id)->with('user')->orderBy('created_at', 'DESC')->get();
+        // foreach($comments as $comment) {
+        //     $comment_like_array = Like::select('user_id')->where('object_id', $comment->id)->where('object_type', 2)->get()->toArray();
+        //     $comment_like = array_column($comment_like_array, 'user_id');
+        //     $comment['likes'] = $comment_like;
+        // }
+        // $likes_array = Like::select('user_id')->where('object_id', $id)->where('object_type', 1)->get()->toArray();
+        // $likes = array_column($likes_array, 'user_id');
+        // $author = User::findOrFail($post->user_id);
+
+        // return $this->successResponse([
+        //     'post' => $post,
+        //     'author' => $author,
+        //     'comments' => $comments,
+        //     'likes' => $likes
+        // ]);
     }
 
     /**

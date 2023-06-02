@@ -2,12 +2,14 @@
 
 namespace App\Exceptions;
 
+use App\Traits\JsonAPIResponses;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Throwable;
 
 class Handler extends ExceptionHandler
 {
+    use JsonAPIResponses;
     /**
      * A list of exception types with their corresponding custom log levels.
      *
@@ -49,15 +51,30 @@ class Handler extends ExceptionHandler
         });
     }
 
+    protected $exceptionMapping = [
+        'Symfony\Component\HttpKernel\Exception\NotFoundHttpException' => 'NotFoundResponse',
+        'Illuminate\Database\Eloquent\ModelNotFoundException'          => 'NotFoundResponse',
+
+        'Illuminate\Auth\AuthenticationException'                      => 'UnauthenticatedResponse',
+        'Laravel\Passport\Exceptions\MissingScopeException'            => 'UnauthenticatedResponse',
+        'Illuminate\Validation\ValidationException'                    => 'ValidationResponse',
+
+        'Illuminate\Database\QueryException'                           => 'ErrorExceptionResponse',
+        'ErrorException'                                               => 'ErrorExceptionResponse',
+        'Error'                                                        => 'ErrorExceptionResponse',
+        'Exception'                                                    => 'ErrorExceptionResponse',
+
+        'App\Exceptions\BusinessException'                             => 'BusinessExceptionResponse',
+    ];
+
     public function render($request, Throwable $exception)
     {
-        if ($request->wantsJson()) {   //add Accept: application/json in request
-            return $this->handleApiException($request, $exception);
-        } else {
-            $retval = parent::render($request, $exception);
+        dd($exception);
+        if ($this->shouldRenderExceptionToJson($exception)) {
+            return $this->renderJsonExceptions($exception);
         }
 
-        return $retval;
+        return parent::render($request, $exception);
     }
 
     private function customApiResponse($exception)
@@ -117,6 +134,8 @@ class Handler extends ExceptionHandler
         if ($exception instanceof \Illuminate\Validation\ValidationException) {
             $exception = $this->convertValidationExceptionToResponse($exception, $request);
         }
+
+        dd($exception);
 
         return $this->customApiResponse($exception);
     }

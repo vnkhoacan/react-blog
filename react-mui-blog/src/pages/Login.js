@@ -3,11 +3,11 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from 'yup';
-import { login } from "../actions/AuthActions";
+import { login, getUser } from "../actions/AuthActions";
 import { connect } from "react-redux";
 import { useEffect } from "react";
 
-const Login = ({login}) => {
+const Login = ({isLogin, login, getUser}) => {
     const navigate = useNavigate();
 
     const formik = useFormik({
@@ -23,7 +23,8 @@ const Login = ({login}) => {
                 .required('Password is required'),
         }),
         onSubmit: values => {
-            login(values).then(() => {
+            login(values).then( async () => {
+                getUser();
                 navigate('/')
             }).catch(() => {
 
@@ -50,7 +51,7 @@ const Login = ({login}) => {
                     alignItems: 'center',
                 }}
                 >
-                    <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+                    <Avatar sx={{ m: 1, bgcolor: 'primary.main' }}>
                         <LockOutlinedIcon />
                     </Avatar>
                     <Typography component="h1" variant="h5">
@@ -118,13 +119,14 @@ const Login = ({login}) => {
 
 const mapStateToProps = state => {
     return {
-        message: state.message.message
+        isLogin: state.auth.isLogin
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
         login: (user) => dispatch(login(user)),
+        getUser: () => dispatch(getUser()),
     }
 }
 

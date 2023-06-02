@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\LikeType;
+use App\Enums\ValidFlag;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class LikeRequest extends FormRequest
 {
@@ -24,9 +27,19 @@ class LikeRequest extends FormRequest
     public function rules()
     {
         return [
-            'object_type' => 'required|numeric',
-            'object_id' => 'required|numeric',
-            'remember_me' => 'boolean'
+            'id' => [
+                'required',
+                'numeric',
+            ],
+            'isLike' => [
+                'required',
+                'numeric',
+                Rule::in(ValidFlag::allType()), // 0:unlike, 1:like
+            ],
+            'type' => [
+                'required',
+                Rule::in(LikeType::allType()),
+            ],
         ];
     }
 }
